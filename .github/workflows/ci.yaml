@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    container: debian:11
+    steps:
+      - name: Install Debian dependencies
+        if: matrix.os == 'debian-11'
+        # Dependencies copied from:
+        # https://github.com/spack/spack/blob/develop/share/spack/templates/container/ubuntu_2404.dockerfile
+        run: |
+          apt-get -yqq update
+          apt-get -yqq upgrade
+          apt-get -yqq install --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            curl \
+            file \
+            g++ \
+            gcc \
+            gfortran \
+            git \
+            gnupg2 \
+            iproute2 \
+            locales \
+            make \
+            mercurial \
+            subversion \
+            python3 \
+            python3-boto3 \
+            unzip \
+            zstd
+          locale-gen en_US.UTF-8
+
+      - uses: actions/checkout@v4
+
+      - uses: spack/setup-spack@v2
+
+      - uses: viperML/spack-buildcache-action@main
+        with:
+          environment: .
+
+      - name: Commit and push spack.lock if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          shopt -s globstar
+          git add spack.lock
+          if ! git diff --cached --quiet; then
+            set -e
+            git commit -m "ci: update spack.lock"
+          fi
+          git push origin HEAD:${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,14 @@
+spack:
+  view: true
+  concretizer:
+    unify: true
+
+  specs:
+  - openmpi
+  - py-mpi4py
+  - python
+
+  mirrors:
+    gh-buildcache:
+      url: oci://ghcr.io/viperml/test-mpi
+      signed: false
