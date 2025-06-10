@@ -4,7 +4,7 @@ spack:
     unify: true
 
   specs:
-  - openmpi
+  - openmpi @4
   - py-mpi4py
   - python
 
