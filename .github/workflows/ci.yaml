@@ -14,7 +14,6 @@ jobs:
     container: debian:11
     steps:
       - name: Install Debian dependencies
-        if: matrix.os == 'debian-11'
         # Dependencies copied from:
         # https://github.com/spack/spack/blob/develop/share/spack/templates/container/ubuntu_2404.dockerfile
         run: |
