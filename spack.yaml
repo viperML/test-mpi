@@ -12,3 +12,8 @@ spack:
     gh-buildcache:
       url: oci://ghcr.io/viperml/test-mpi
       signed: false
+
+  packages:
+    all:
+      require:
+      - target=x86_64
